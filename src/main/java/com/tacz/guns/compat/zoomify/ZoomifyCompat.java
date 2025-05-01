@@ -14,7 +14,12 @@ public class ZoomifyCompat {
 
     public static double getFov(double fov, float tickDelta) {
         if (INSTALLED) {
-            return fov / Zoomify.getZoomDivisor(tickDelta);
+            try {
+                return fov / Zoomify.getZoomDivisor(tickDelta);
+            } catch (Exception e) {
+                System.err.println("Error while getting Zoomify zoom divisor: " + e.getMessage());
+                return fov;
+            }
         }
         return fov;
     }

@@ -62,6 +62,18 @@ repositories {
 		url = "https://maven.terraformersmc.com/"
 	}
 	maven {
+		name = "Fabric Language Kotlin"
+		url = "https://maven.fabricmc.net/"
+	}
+	maven {
+		name = "xanderRepo"
+		url = "https://maven.isxander.dev/releases"
+	}
+	maven {
+		name = "Quilt"
+		url = "https://maven.quiltmc.org/repository/release"
+	}
+	maven {
 		url = 'https://oss.sonatype.org/content/repositories/snapshots'
 	}
 	maven {
