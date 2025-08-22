@@ -1,73 +1,74 @@
 {
-	"schemaVersion": 1,
-	"id": "tacz",
-	"version": "${version}",
-	"name": "Timeless & Classics Guns: Zero",
-	"description": "",
-	"authors": [
-		"Serene Wave Studio | Modified by We-Cant-Coding"
-	],
-	"contact": {
-		"issues": "https://github.com/We-Cant-Coding/TACZ-Fabric/issues",
-		"sources": "https://github.com/We-Cant-Coding/TACZ-Fabric"
-	},
-	"license": "GPL-3.0",
-	"icon": "assets/tacz/icon.png",
-	"environment": "*",
-	"entrypoints": {
-		"main": [
-			"com.tacz.guns.GunMod"
-		],
-		"client": [
-			"com.tacz.guns.GunModClient"
-		],
-		"cardinal-components": [
-			"com.tacz.guns.GunModComponents"
-		],
-		"jei_mod_plugin": [
-			"com.tacz.guns.compat.jei.GunModPlugin"
-		],
-		"rei_common": [
-          	"com.tacz.guns.compat.rei.GunModPlugin"
-		],
-		"rei_client": [
-			"com.tacz.guns.compat.rei.GunModClientPlugin"
-		],
-		"emi": [
-			"com.tacz.guns.compat.emi.GunModPlugin"
-		],
-		"modmenu": [
-			"com.tacz.guns.compat.modmenu.ModMenuIntegration"
-		]
-	},
-	"mixins": [
-		"tacz.mixins.json"
-	],
-	"depends": {
-		"fabricloader": ">=0.15.11",
-		"minecraft": "1.20.1",
-		"java": ">=17",
-		"fabric-api": "*",
-		"forgeconfigapiport": ">=8.0.0",
-		"cardinal-components-base": ">=5.2.2",
-		"cardinal-components-entity": ">=5.2.2",
-		"porting_lib_core": ">=2.3.4+1.20.1",
-		"porting_lib_tags": "*",
-		"porting_lib_entity": ">=2.3.4+1.20.1",
-		"mkb": ">=1.2.0"
-	},
-	"custom": {
-		"loom:injected_interfaces": {
-			"net/minecraft/class_276": [
-				"com/tacz/guns/api/mixin/FramebufferStencil"
-			],
-			"net/minecraft/class_1309": [
-				"com/tacz/guns/api/mixin/ItemHandlerCapability"
-			]
-		},
-		"cardinal-components": [
-			"tacz:synced_entity_data"
-		]
-	},
-	"accessWidener": "tacz.accesswidener"
+  "schemaVersion": 1,
+  "id": "tacz",
+  "version": "${version}",
+  "name": "Timeless & Classics Guns: Zero",
+  "description": "",
+  "authors": [
+    "Sh1roCu",
+    "Serene Wave Studio | Modified by We-Cant-Coding"
+  ],
+  "contact": {
+    "issues": "https://github.com/We-Cant-Coding/TACZ-Fabric/issues",
+    "sources": "https://github.com/We-Cant-Coding/TACZ-Fabric"
+  },
+  "license": "GPL-3.0",
+  "icon": "assets/tacz/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.tacz.guns.GunMod"
+    ],
+    "client": [
+      "com.tacz.guns.GunModClient"
+    ],
+    "cardinal-components": [
+      "com.tacz.guns.GunModComponents"
+    ],
+    "jei_mod_plugin": [
+      "com.tacz.guns.compat.jei.GunModPlugin"
+    ],
+    "rei_common": [
+      "com.tacz.guns.compat.rei.GunModPlugin"
+    ],
+    "rei_client": [
+      "com.tacz.guns.compat.rei.GunModClientPlugin"
+    ],
+    "emi": [
+      "com.tacz.guns.compat.emi.GunModPlugin"
+    ],
+    "modmenu": [
+      "com.tacz.guns.compat.modmenu.ModMenuIntegration"
+    ]
+  },
+  "mixins": [
+    "tacz.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.15.11",
+    "minecraft": "1.20.1",
+    "java": ">=17",
+    "fabric-api": "*",
+    "forgeconfigapiport": ">=8.0.0",
+    "cardinal-components-base": ">=5.2.2",
+    "cardinal-components-entity": ">=5.2.2",
+    "porting_lib_core": ">=2.3.4+1.20.1",
+    "porting_lib_tags": "*",
+    "porting_lib_entity": ">=2.3.4+1.20.1",
+    "mkb": ">=1.2.0"
+  },
+  "custom": {
+    "loom:injected_interfaces": {
+      "net/minecraft/class_276": [
+        "com/tacz/guns/api/mixin/FramebufferStencil"
+      ],
+      "net/minecraft/class_1309": [
+        "com/tacz/guns/api/mixin/ItemHandlerCapability"
+      ]
+    },
+    "cardinal-components": [
+      "tacz:synced_entity_data"
+    ]
+  },
+  "accessWidener": "tacz.accesswidener"
 }
