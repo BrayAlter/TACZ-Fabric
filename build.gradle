@@ -126,7 +126,21 @@ dependencies {
 	modImplementation(include("io.github.fabricators_of_create.Porting-Lib:entity:${project.porting_lib_version}+${project.minecraft_version}"))
 	modImplementation(include("dev.onyxstudios.cardinal-components-api:cardinal-components-base:${project.cardinal_components_api_version}"))
 	modImplementation(include("dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${project.cardinal_components_api_version}"))
-	modImplementation(include("maven.modrinth:modernkeybinding:${project.modernkeybinding_version}"))
+	
+	// Conditional keybinding mod inclusion - only include if Amecs is not present
+	def amecsPresent = file("${project.rootDir}/run/mods").exists() && 
+		file("${project.rootDir}/run/mods").listFiles()?.any { it.name.toLowerCase().contains("amecs") } ?: false
+	
+	if (!amecsPresent) {
+		// Include keybinding mods when Amecs is not detected
+		modImplementation(include("maven.modrinth:modernkeybinding:${project.modernkeybinding_version}"))
+		println("Amecs not detected - including Modern KeyBinding")
+	} else {
+		// Use as compile-only dependency when Amecs is present
+		modCompileOnly("maven.modrinth:modernkeybinding:${project.modernkeybinding_version}")
+		println("Amecs detected - using external keybinding mod")
+	}
+	
 	modImplementation("maven.modrinth:perspective-mod-redux:${project.perspective_mod_redux_version}")
 
 	modRuntimeOnly("maven.modrinth:moonlight:${project.moonlight_version}")
@@ -153,7 +167,18 @@ dependencies {
 	modCompileOnly "dev.emi:emi-fabric:${project.emi_version}+${project.minecraft_version}:api"
 	modCompileOnly "maven.modrinth:jei:${project.jei_version}"
 	modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
-	modCompileOnly include("maven.modrinth:controlling:${project.controlling_version}")
+	
+	// Conditional controlling mod inclusion - only include if Amecs is not present
+	if (!amecsPresent) {
+		// Include controlling when Amecs is not detected
+		modCompileOnly include("maven.modrinth:controlling:${project.controlling_version}")
+		println("Amecs not detected - including Controlling")
+	} else {
+		// Use as compile-only dependency when Amecs is present
+		modCompileOnly("maven.modrinth:controlling:${project.controlling_version}")
+		println("Amecs detected - using external controlling if available")
+	}
+	
 	modCompileOnly include("maven.modrinth:searchables:${project.searchables_version}")
 
 	// 일부 보간 연산을 수행하기 위한 Apache Commons 수학 라이브러리
