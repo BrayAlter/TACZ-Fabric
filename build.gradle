@@ -127,18 +127,17 @@ dependencies {
 	modImplementation(include("dev.onyxstudios.cardinal-components-api:cardinal-components-base:${project.cardinal_components_api_version}"))
 	modImplementation(include("dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${project.cardinal_components_api_version}"))
 	
-	// Conditional keybinding mod inclusion - only include if Amecs is not present
-	def amecsPresent = file("${project.rootDir}/run/mods").exists() && 
-		file("${project.rootDir}/run/mods").listFiles()?.any { it.name.toLowerCase().contains("amecs") } ?: false
+	// Build variant for keybinding mods - controlled by buildVariant property
+	def buildVariant = project.findProperty('buildVariant') ?: 'standard'
 	
-	if (!amecsPresent) {
-		// Include keybinding mods when Amecs is not detected
+	if (buildVariant == 'standard') {
+		// Standard build - includes keybinding mods
 		modImplementation(include("maven.modrinth:modernkeybinding:${project.modernkeybinding_version}"))
-		println("Amecs not detected - including Modern KeyBinding")
-	} else {
-		// Use as compile-only dependency when Amecs is present
+		println("Building STANDARD variant - including Modern KeyBinding")
+	} else if (buildVariant == 'amecs') {
+		// Amecs build - excludes keybinding mods for external Amecs compatibility
 		modCompileOnly("maven.modrinth:modernkeybinding:${project.modernkeybinding_version}")
-		println("Amecs detected - using external keybinding mod")
+		println("Building AMECS variant - excluding bundled keybinding mods")
 	}
 	
 	modImplementation("maven.modrinth:perspective-mod-redux:${project.perspective_mod_redux_version}")
@@ -168,15 +167,15 @@ dependencies {
 	modCompileOnly "maven.modrinth:jei:${project.jei_version}"
 	modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
 	
-	// Conditional controlling mod inclusion - only include if Amecs is not present
-	if (!amecsPresent) {
-		// Include controlling when Amecs is not detected
+	// Controlling mod - also controlled by build variant
+	if (buildVariant == 'standard') {
+		// Standard build - includes controlling mod
 		modCompileOnly include("maven.modrinth:controlling:${project.controlling_version}")
-		println("Amecs not detected - including Controlling")
-	} else {
-		// Use as compile-only dependency when Amecs is present
+		println("Building STANDARD variant - including Controlling")
+	} else if (buildVariant == 'amecs') {
+		// Amecs build - excludes controlling mod
 		modCompileOnly("maven.modrinth:controlling:${project.controlling_version}")
-		println("Amecs detected - using external controlling if available")
+		println("Building AMECS variant - excluding bundled Controlling")
 	}
 	
 	modCompileOnly include("maven.modrinth:searchables:${project.searchables_version}")
@@ -220,5 +219,40 @@ jar {
 	// We-Cant-Coding/TACZ-Fabric Licenses
 	from("LICENSE") {
 		rename { "${it}_${project.base.archivesName.get()}"}
+	}
+}
+
+// Create a separate JAR task for amecs variant
+task amecsJar(type: Jar) {
+	from sourceSets.main.output
+	archiveClassifier = 'amecs'
+	
+	from("LICENSE") {
+		rename { "${it}_${project.base.archivesName.get()}"}
+	}
+}
+
+// Task to build amecs variant
+task buildAmecs {
+	group = 'build'
+	description = 'Builds the amecs variant without bundled keybinding mods'
+	dependsOn 'clean', 'compileJava', 'processResources', 'classes'
+	finalizedBy 'amecsJar'
+	
+	doFirst {
+		project.ext.buildVariant = 'amecs'
+		println "Building AMECS variant"
+	}
+}
+
+// Task to build standard variant
+task buildStandard {
+	group = 'build'
+	description = 'Builds the standard variant with bundled keybinding mods'
+	dependsOn 'clean', 'build'
+	
+	doFirst {
+		project.ext.buildVariant = 'standard'
+		println "Building STANDARD variant"
 	}
 }

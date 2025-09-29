@@ -34,14 +34,35 @@ jobs:
         with:
           cache-read-only: true
 
-      - name: Build w/ Gradle Wrapper
-        run: ./gradlew build
+      - name: Build Standard Variant
+        run: ./gradlew clean build -PbuildVariant=standard
+
+      - name: Rename Standard Build
+        run: |
+          mkdir -p release-artifacts
+          cp build/libs/*.jar release-artifacts/
+          
+      - name: Build Amecs Variant
+        run: ./gradlew amecsJar -PbuildVariant=amecs
+
+      - name: Prepare Release Artifacts
+        run: |
+          cp build/libs/*.jar release-artifacts/
+          cp LICENSE release-artifacts/
 
       - name: Upload Release
         uses: softprops/action-gh-release@v2
         with:
-          files: 'build/libs/*[0-9].jar;LICENSE'
+          files: 'release-artifacts/*'
           token: ${{ secrets.GITHUB_TOKEN }}
           draft: false
           prerelease: false
           append_body: true
+          body: |
+            ## Build Variants
+            
+            This release includes two variants:
+            - **Standard**: Includes bundled Modern KeyBinding and Controlling mods
+            - **Amecs**: Compatible with external Amecs mod (excludes bundled keybinding mods)
+            
+            Choose the variant that matches your setup!

@@ -32,12 +32,25 @@ jobs:
         with:
           cache-read-only: true
 
-      - name: Build w/ Gradle Wrapper
-        run: ./gradlew build
+      - name: Build Standard Variant
+        run: ./gradlew clean build -PbuildVariant=standard
 
-      - name: Upload Build Artifacts
+      - name: Build Amecs Variant
+        run: ./gradlew amecsJar -PbuildVariant=amecs
+
+      - name: Upload Standard Build Artifacts
         if: ${{ matrix.java == '17' }} # Only upload artifacts built from latest Java
         uses: actions/upload-artifact@v4
         with:
-          name: tacz-artifacts
-          path: build/libs/*.jar
+          name: tacz-standard-pr
+          path: |
+            build/libs/tacz-fabric-*.jar
+            !build/libs/tacz-fabric-*-amecs.jar
+            !build/libs/tacz-fabric-*-sources.jar
+
+      - name: Upload Amecs Build Artifacts
+        if: ${{ matrix.java == '17' }} # Only upload artifacts built from latest Java
+        uses: actions/upload-artifact@v4
+        with:
+          name: tacz-amecs-pr
+          path: build/libs/tacz-fabric-*-amecs.jar
