@@ -4,8 +4,7 @@ import com.tacz.guns.api.client.event.InputEvent;
 import com.tacz.guns.client.gui.compat.ClothConfigScreen;
 import com.tacz.guns.compat.cloth.MenuIntegration;
 import com.tacz.guns.init.CompatRegistry;
-import committee.nova.mkb.api.IKeyBinding;
-import committee.nova.mkb.keybinding.KeyModifier;
+import com.tacz.guns.compat.mkb.MkbCompat;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
@@ -32,7 +31,7 @@ public class ConfigKey {
     public static void onOpenConfig(InputEvent.Key event) {
         if (isInGame() && event.getAction() == GLFW.GLFW_PRESS
                 && OPEN_CONFIG_KEY.matchesKey(event.getKey(), event.getScanCode())
-                && ((IKeyBinding) OPEN_CONFIG_KEY).getKeyModifier().equals(KeyModifier.getActiveModifier())) {
+                && MkbCompat.checkKeyModifier(OPEN_CONFIG_KEY)) {
             ClientPlayerEntity player = MinecraftClient.getInstance().player;
             if (player == null || player.isSpectator()) {
                 return;

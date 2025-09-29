@@ -191,9 +191,68 @@ dependencies {
 
 processResources {
 	inputs.property "version", project.version
+	inputs.property "buildVariant", project.findProperty("buildVariant") ?: "standard"
 
 	filesMatching("fabric.mod.json") {
 		expand "version": project.version
+	}
+}
+
+// Custom task to create amecs variant from remapped JAR
+task modifyAmecsJar {
+	dependsOn remapJar
+	doLast {
+		def buildVariant = project.findProperty("buildVariant")
+		println "Build variant: ${buildVariant}"
+		
+		if (buildVariant == "amecs") {
+			// Use the exact filename pattern as produced by remapJar
+			def standardJar = file("build/libs/tacz-fabric-${project.minecraft_version}-${project.version}.jar")
+			def amecsJar = file("build/libs/tacz-fabric-${project.minecraft_version}-${project.version}-amecs.jar")
+			
+			println "Standard JAR exists: ${standardJar.exists()}"
+			println "Standard JAR path: ${standardJar.absolutePath}"
+			
+			if (standardJar.exists()) {
+				println "Creating amecs variant..."
+				
+				// Create temporary directory
+				def tempDir = file("build/tmp/amecs-jar-modification")
+				tempDir.deleteDir()
+				tempDir.mkdirs()
+				
+				// Extract standard JAR
+				copy {
+					from zipTree(standardJar)
+					into tempDir
+				}
+				
+				// Modify fabric.mod.json
+				def fabricModJson = file("${tempDir}/fabric.mod.json")
+				if (fabricModJson.exists()) {
+					println "Modifying fabric.mod.json..."
+					def content = fabricModJson.text
+					def originalContent = content
+					content = content.replaceAll(',\\s*"mkb":\\s*"[^"]*"', '')
+					fabricModJson.text = content
+					println "Modified: ${originalContent != content}"
+				}
+				
+				// Create amecs JAR
+				ant.jar(destfile: amecsJar) {
+					fileset(dir: tempDir)
+				}
+				
+				println "Created amecs JAR: ${amecsJar.exists()}"
+				
+				// Clean up
+				tempDir.deleteDir()
+			} else {
+				println "Standard JAR not found!"
+			}
+		} else {
+			println "Not amecs variant, skipping modification"
+		}
 	}
 }
 
@@ -223,13 +282,11 @@ jar {
 }
 
 // Create a separate JAR task for amecs variant
-task amecsJar(type: Jar) {
-	from sourceSets.main.output
-	archiveClassifier = 'amecs'
-	
-	from("LICENSE") {
-		rename { "${it}_${project.base.archivesName.get()}"}
-	}
+task amecsJar(type: Copy) {
+	dependsOn modifyAmecsJar
+	from file("build/libs/tacz-fabric-${project.version}-amecs.jar")
+	into file("build/libs/")
+	// This task just ensures the modified JAR is in place
 }
 
 // Task to build amecs variant

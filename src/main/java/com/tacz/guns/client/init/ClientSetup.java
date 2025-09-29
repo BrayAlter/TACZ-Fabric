@@ -17,9 +17,7 @@ import com.tacz.guns.inventory.tooltip.AttachmentItemTooltip;
 import com.tacz.guns.inventory.tooltip.GunTooltip;
 import com.tacz.guns.item.AmmoBoxItem;
 import com.tacz.guns.mixin.client.MinecraftClientAccessor;
-import committee.nova.mkb.api.IKeyBinding;
-import committee.nova.mkb.keybinding.KeyConflictContext;
-import committee.nova.mkb.keybinding.KeyModifier;
+import com.tacz.guns.compat.mkb.MkbCompat;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.minecraft.client.MinecraftClient;
@@ -48,17 +46,12 @@ public class ClientSetup {
                 ConfigKey.OPEN_CONFIG_KEY
         };
 
-        var configKey = ((IKeyBinding)ConfigKey.OPEN_CONFIG_KEY);
-        try {
-            var field = configKey.getClass().getDeclaredField("keyModifierDefault");
-            field.setAccessible(true);
-            field.set(configKey, KeyModifier.ALT);
-            field.setAccessible(false);
-        } catch (Exception ignored) {}
+        // Set ALT modifier for config key if MKB is available
+        MkbCompat.setKeyModifier(ConfigKey.OPEN_CONFIG_KEY, "ALT");
 
         for (KeyBinding key : keys) {
-            IKeyBinding ikb = (IKeyBinding) key;
-            ikb.setKeyConflictContext(KeyConflictContext.IN_GAME);
+            // Set key conflict context if MKB is available
+            MkbCompat.setKeyConflictContext(key);
             KeyBindingHelper.registerKeyBinding(key);
         }
     }
